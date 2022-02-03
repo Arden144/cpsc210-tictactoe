@@ -45,13 +45,13 @@ public class Board implements Serializable {
     @Override
     public String toString() {
         String format = ""
-                + "┌───┬───┬───┐\n"
-                + "│ %s │ %s │ %s │\n"
-                + "├───┼───┼───┤\n"
-                + "│ %s │ %s │ %s │\n"
-                + "├───┼───┼───┤\n"
-                + "│ %s │ %s │ %s │\n"
-                + "└───┴───┴───┘";
+                + "┌─────┬─────┬─────┐\n"
+                + "│%3s  │%3s  │%3s  │\n"
+                + "├─────┼─────┼─────┤\n"
+                + "│%3s  │%3s  │%3s  │\n"
+                + "├─────┼─────┼─────┤\n"
+                + "│%3s  │%3s  │%3s  │\n"
+                + "└─────┴─────┴─────┘";
 
         String[] tiles = new String[9];
         for (int y = 0; y < 3; y++) {
