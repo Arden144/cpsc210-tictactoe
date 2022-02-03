@@ -3,6 +3,7 @@ package ui;
 import java.io.IOException;
 
 import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -52,6 +53,23 @@ public class TicTacToe {
     private void render() {
         if (game.isEnded()) {
             return;
+        }
+
+        drawBoard();
+    }
+
+    private void drawBoard() {
+        drawText(0, 0, game.getBoard().toString());
+    }
+
+    private void drawText(int x, int y, String message) {
+        TextGraphics text = screen.newTextGraphics();
+
+        String[] lines = message.split("\n");
+        int lineNumber = 0;
+
+        for (String line : lines) {
+            text.putString(x, y + lineNumber++, line);
         }
     }
 }

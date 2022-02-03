@@ -8,6 +8,10 @@ public class Game {
         board = new Board();
     }
 
+    public Board getBoard() {
+        return board;
+    }
+
     public boolean isEnded() {
         return false;
     }
