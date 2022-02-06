@@ -4,11 +4,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import model.Game;
-import model.Tile;
 
 public class Prompt {
     private static final Pattern LETTER_NUMBER = Pattern.compile("([a-cA-C])([1-3])");
     private static final Pattern NUMBER_LETTER = Pattern.compile("([1-3])([a-cA-C])");
+    private static final Pattern QUIT = Pattern.compile("(?i)quit");
 
     private String prompt;
     private Game game;
@@ -30,7 +30,7 @@ public class Prompt {
         if (m.find()) {
             int x = columnToNumber(m.group(1));
             int y = rowToNumber(m.group(2));
-            game.getBoard().setPosition(x, y, Tile.X);
+            game.addTile(x, y);
             return;
         }
 
@@ -39,7 +39,17 @@ public class Prompt {
         if (m.find()) {
             int y = rowToNumber(m.group(1));
             int x = columnToNumber(m.group(2));
-            game.getBoard().setPosition(x, y, Tile.X);
+            game.addTile(x, y);
+            return;
+        }
+
+        /**
+         * Match group for quitting the program
+         */
+
+        m = Prompt.QUIT.matcher(prompt);
+        if (m.find()) {
+            game.end();
             return;
         }
     }
