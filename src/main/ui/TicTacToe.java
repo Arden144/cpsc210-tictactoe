@@ -15,39 +15,29 @@ public class TicTacToe {
     private Screen screen;
     private Prompt prompt;
 
-    public TicTacToe() throws IOException, InterruptedException {
+    public TicTacToe() throws IOException {
         screen = new DefaultTerminalFactory().createScreen();
         screen.startScreen();
 
         game = new Game();
         prompt = new Prompt(game);
 
-        beginTicks();
+        start();
     }
 
-    private void beginTicks() throws InterruptedException, IOException {
+    private void start() throws IOException {
         while (!game.isEnded()) {
-            tick();
-            Thread.sleep(1000L / Game.TICKS_PER_SECOND);
-        }
+            screen.setCursorPosition(new TerminalPosition(2 + prompt.getPrompt().length(), 9));
+            screen.clear();
+            render();
+            screen.refresh();
 
-        System.exit(0);
+            getUserInput();
+        }
     }
 
-    private void tick() throws IOException {
-        handleUserInput();
-
-        screen.setCursorPosition(new TerminalPosition(2 + prompt.getPrompt().length(), 8));
-        screen.clear();
-        render();
-        screen.refresh();
-    }
-
-    private void handleUserInput() throws IOException {
-        KeyStroke stroke = screen.pollInput();
-        if (stroke == null) {
-            return;
-        }
+    private void getUserInput() throws IOException {
+        KeyStroke stroke = screen.readInput();
 
         switch (stroke.getKeyType()) {
             case Backspace:
@@ -61,35 +51,35 @@ public class TicTacToe {
                 prompt.add(stroke.getCharacter());
                 break;
             default:
-                break;
         }
     }
 
     private void render() {
-        if (game.isEnded()) {
-            return;
-        }
-
+        drawMessage();
         drawBoard();
         drawStatus();
     }
 
+    private void drawMessage() {
+        placeText(0, 0, game.getMessage());
+    }
+
     private void drawBoard() {
-        placeText(0, 0, game.getBoard().toString());
+        placeText(0, 1, game.getBoard().toString());
     }
 
     private void drawStatus() {
-        placeText(0, 8, "> " + prompt.getPrompt());
+        placeText(0, 9, "> " + prompt.getPrompt());
     }
 
     private void placeText(int x, int y, String message) {
         TextGraphics text = screen.newTextGraphics();
 
         String[] lines = message.split("\n");
-        int lineNumber = 0;
+        int i = 0;
 
         for (String line : lines) {
-            text.putString(x, y + lineNumber++, line);
+            text.putString(x, y + i++, line);
         }
     }
 }
