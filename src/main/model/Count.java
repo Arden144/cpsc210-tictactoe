@@ -1,6 +1,8 @@
 package model;
 
-public class Count {
+import java.io.Serializable;
+
+public class Count implements Serializable {
     private int x;
     private int o;
 
@@ -11,11 +13,9 @@ public class Count {
 
     public boolean checkMoveForWin(Tile v) {
         if (v == Tile.X) {
-            x++;
-            return x == 3;
+            return ++x == 3;
         } else if (v == Tile.O) {
-            o++;
-            return o == 3;
+            return ++o == 3;
         }
         return false;
     }

@@ -1,11 +1,15 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 public class Board implements Serializable {
-    private Count[] rows, cols, diags;
-    private Tile[][] board;
+    private final Count[] rows;
+    private final Count[] cols;
+    private final Count[] diags;
+    protected final Tile[][] board;
+
+    private boolean win;
+    private boolean draw;
 
     public Board() {
         board = new Tile[][] {
@@ -16,41 +20,21 @@ public class Board implements Serializable {
         rows = new Count[] { new Count(), new Count(), new Count() };
         cols = new Count[] { new Count(), new Count(), new Count() };
         diags = new Count[] { new Count(), new Count() };
+        win = false;
+        draw = false;
     }
 
-    protected Tile getPosition(int x, int y) throws IllegalArgumentException {
-        if (x < 0 || x >= 3 || y < 0 || y >= 3) {
-            throw new IllegalArgumentException();
-        }
-
+    protected Tile getPosition(int x, int y) {
         return board[y][x];
     }
 
-    protected void setPosition(int x, int y, Tile v) throws IllegalArgumentException {
-        if (x < 0 || x >= 3 || y < 0 || y >= 3 || v == Tile.BLANK) {
-            throw new IllegalArgumentException();
-        }
-
+    protected void setPosition(int x, int y, Tile v) {
         board[y][x] = v;
 
-        if (rows[y].checkMoveForWin(v) ||
-                cols[x].checkMoveForWin(v) ||
-                (x == y && diags[0].checkMoveForWin(v)) ||
-                ((2 - x) == y && diags[1].checkMoveForWin(v))) {
-            System.exit(1);
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Board secondBoard = (Board) o;
-        return Arrays.deepEquals(board, secondBoard.board);
+        win = rows[y].checkMoveForWin(v)
+                || cols[x].checkMoveForWin(v)
+                || (x == y && diags[0].checkMoveForWin(v))
+                || ((2 - x) == y && diags[1].checkMoveForWin(v));
     }
 
     @Override
@@ -73,5 +57,13 @@ public class Board implements Serializable {
         }
 
         return String.format(format, (Object[]) tiles);
+    }
+
+    public boolean isWon() {
+        return win;
+    }
+
+    public boolean isDraw() {
+        return draw;
     }
 }

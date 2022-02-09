@@ -2,70 +2,76 @@ package model;
 
 import java.io.Serializable;
 
+import com.googlecode.lanterna.TerminalSize;
+
 public class Game implements Serializable {
     public static final int TICKS_PER_SECOND = 10;
-    private boolean ended;
+    private static int width;
+    private static int height;
     private boolean turn;
-    private int scoreX;
-    private int scoreO;
     private String message;
     private Board board;
+    private State state;
+
+    public State getState() {
+        return state;
+    }
 
     public Game() {
-        board = new Board();
-        message = "";
-        turn = false;
-        scoreX = 0;
-        scoreO = 0;
+        reset();
+    }
+
+    public static int getWidth() {
+        return width;
+    }
+
+    public static int getHeight() {
+        return height;
     }
 
     public Board getBoard() {
         return board;
     }
 
+    public static void resize(TerminalSize size) {
+        Game.width = size.getColumns();
+        Game.height = size.getRows();
+    }
+
     public String getMessage() {
         return message == "" ? String.format("%s's turn", turn ? "O" : "X") : message;
     }
 
-    public boolean isEnded() {
-        return ended;
+    public boolean getTurn() {
+        return turn;
     }
 
-    public int getScoreX() {
-        return scoreX;
+    public void reset() {
+        board = new Board();
+        message = "";
+        turn = false;
+        state = State.Play;
     }
 
-    public int getScoreO() {
-        return scoreO;
+    public void quit() {
+        state = State.End;
     }
 
-    public void addScoreX() {
-        scoreX += 1;
-    }
-
-    public void addScoreO() {
-        scoreO += 1;
-    }
-
-    private void nextTurn() {
-        turn = !turn;
-    }
-
-    public boolean addTile(int x, int y) {
+    public void addTile(int x, int y) {
         Tile tile = board.getPosition(x, y);
         if (tile != Tile.BLANK) {
             message = "There's already a tile in that position";
-            return false;
+            return;
         }
 
-        Tile newTile = turn ? Tile.O : Tile.X;
         message = "";
-        board.setPosition(x, y, newTile);
-        nextTurn();
-        return true;
-    }
-
-    public void end() {
-        ended = true;
+        board.setPosition(x, y, turn ? Tile.O : Tile.X);
+        if (board.isWon()) {
+            state = State.Win;
+        } else if (board.isDraw()) {
+            state = State.Draw;
+        } else {
+            turn = !turn;
+        }
     }
 }

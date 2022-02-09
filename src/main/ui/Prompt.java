@@ -5,53 +5,59 @@ import java.util.regex.Pattern;
 
 import model.Game;
 
-public class Prompt {
+class Prompt {
     private static final Pattern LETTER_NUMBER = Pattern.compile("([a-cA-C])([1-3])");
     private static final Pattern NUMBER_LETTER = Pattern.compile("([1-3])([a-cA-C])");
     private static final Pattern QUIT = Pattern.compile("(?i)quit");
 
     private String prompt;
-    private Game game;
+    private final Game game;
 
     public Prompt(Game game) {
         this.game = game;
         prompt = "";
     }
 
-    public void run() {
-        Matcher m;
-
-        /**
-         * Match group for placing a tile
-         */
-
-        // Number and then a letter (ex. 1A)
-        m = Prompt.NUMBER_LETTER.matcher(prompt);
+    private boolean checkNumberLetter() {
+        Matcher m = Prompt.NUMBER_LETTER.matcher(prompt);
         if (m.find()) {
             int x = columnToNumber(m.group(1));
             int y = rowToNumber(m.group(2));
             game.addTile(x, y);
-            return;
+            return true;
         }
+        return false;
+    }
 
-        // Letter and then a number (ex. A1)
-        m = Prompt.LETTER_NUMBER.matcher(prompt);
+    private boolean checkLetterNumber() {
+        Matcher m = Prompt.LETTER_NUMBER.matcher(prompt);
         if (m.find()) {
             int y = rowToNumber(m.group(1));
             int x = columnToNumber(m.group(2));
             game.addTile(x, y);
-            return;
+            return true;
         }
+        return false;
+    }
 
-        /**
-         * Match group for quitting the program
-         */
-
-        m = Prompt.QUIT.matcher(prompt);
+    private boolean checkQuit() {
+        Matcher m = Prompt.QUIT.matcher(prompt);
         if (m.find()) {
-            game.end();
-            return;
+            game.quit();
+            return true;
         }
+        return false;
+    }
+
+    public void run() {
+        if (checkNumberLetter()) {
+            //
+        } else if (checkLetterNumber()) {
+            //
+        } else if (checkQuit()) {
+            //
+        }
+        prompt = "";
     }
 
     private int rowToNumber(String row) {
@@ -83,14 +89,6 @@ public class Prompt {
         }
     }
 
-    public String getPrompt() {
-        return prompt;
-    }
-
-    public void clear() {
-        prompt = "";
-    }
-
     public void add(Character c) {
         prompt += c;
     }
@@ -99,5 +97,14 @@ public class Prompt {
         if (prompt.length() > 0) {
             prompt = prompt.substring(0, prompt.length() - 1);
         }
+    }
+
+    public int getWidth() {
+        return 2 + prompt.length();
+    }
+
+    @Override
+    public String toString() {
+        return prompt;
     }
 }
