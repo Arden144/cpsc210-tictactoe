@@ -2,83 +2,66 @@ package ui;
 
 import java.io.IOException;
 
-import com.googlecode.lanterna.TerminalPosition;
-import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.graphics.TextGraphics;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import model.Game;
-import model.State;
 
-class TicTacToe {
-    private final Game game;
+public class TicTacToe {
+    /**
+     * Data
+     */
+
     private final Screen screen;
-    private final Prompt prompt;
+    private final Game game;
+    private final Renderer renderer;
+    private final Reader reader;
+
+    /**
+     * Internal
+     */
+
+    private void play() throws IOException {
+        renderer.render();
+        reader.read();
+    }
+
+    private void draw() {
+
+    }
+
+    private void win() {
+
+    }
+
+    /**
+     * Public
+     */
 
     public TicTacToe() throws IOException {
         screen = new DefaultTerminalFactory().createScreen();
+        game = new Game();
+        renderer = new Renderer(screen, game);
+        reader = new Reader(screen, game);
+    }
+
+    public void start() throws IOException {
         screen.startScreen();
 
-        Game.resize(screen.getTerminalSize());
-        game = new Game();
-        prompt = new Prompt(game);
-
-        start();
-    }
-
-    private void start() throws IOException {
-        while (game.getState() != State.End) {
-            TerminalSize size = screen.doResizeIfNecessary();
-            if (size != null) {
-                Game.resize(size);
+        while (game.getState() != Game.State.End) {
+            switch (game.getState()) {
+                case Play:
+                    play();
+                    break;
+                case Draw:
+                    draw();
+                    break;
+                case Win:
+                    win();
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected Game State: " + game.getState());
             }
-
-            screen.setCursorPosition(new TerminalPosition(prompt.getWidth(), 9));
-
-            screen.clear();
-            draw(screen.newTextGraphics());
-            screen.refresh();
-
-            getUserInput();
         }
-    }
-
-    private void getUserInput() throws IOException {
-        KeyStroke stroke = screen.readInput();
-
-        switch (stroke.getKeyType()) {
-            case Backspace:
-                prompt.backspace();
-                break;
-            case Enter:
-                prompt.run();
-                break;
-            case Character:
-                prompt.add(stroke.getCharacter());
-                break;
-            default:
-        }
-    }
-
-    public void draw(TextGraphics tg) {
-        switch (game.getState()) {
-            case Play:
-                Drawing.placeText(tg, 0, 0, game.getMessage());
-                Drawing.placeText(tg, 0, 1, game.getBoard().toString());
-                break;
-            case Draw:
-                Drawing.placeText(tg, 0, 0, "Draw!\nPress enter to continue");
-                break;
-            case Win:
-                Drawing.placeText(tg, 0, 0,
-                        String.format("%s Wins!\nPress enter to continue", game.getTurn() ? "O" : "X"));
-                break;
-            default:
-                break;
-        }
-
-        Drawing.placeText(tg, 0, 9, "> " + prompt.toString());
     }
 }

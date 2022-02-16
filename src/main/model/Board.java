@@ -1,69 +1,52 @@
 package model;
 
-import java.io.Serializable;
+public class Board {
+    /**
+     * Data
+     */
 
-public class Board implements Serializable {
-    private final Count[] rows;
-    private final Count[] cols;
-    private final Count[] diags;
-    protected final Tile[][] board;
-
+    private Tile[] board;
+    private RowCount[] columns;
+    private RowCount[] rows;
+    private RowCount fallingDiagonal;
+    private RowCount risingDiagonal;
     private boolean win;
-    private boolean draw;
+
+    /**
+     * Internal
+     */
+
+    /**
+     * Public
+     */
 
     public Board() {
-        board = new Tile[][] {
-                { Tile.BLANK, Tile.BLANK, Tile.BLANK },
-                { Tile.BLANK, Tile.BLANK, Tile.BLANK },
-                { Tile.BLANK, Tile.BLANK, Tile.BLANK }
-        };
-        rows = new Count[] { new Count(), new Count(), new Count() };
-        cols = new Count[] { new Count(), new Count(), new Count() };
-        diags = new Count[] { new Count(), new Count() };
-        win = false;
-        draw = false;
-    }
-
-    protected Tile getPosition(int x, int y) {
-        return board[y][x];
-    }
-
-    protected void setPosition(int x, int y, Tile v) {
-        board[y][x] = v;
-
-        win = rows[y].checkMoveForWin(v)
-                || cols[x].checkMoveForWin(v)
-                || (x == y && diags[0].checkMoveForWin(v))
-                || ((2 - x) == y && diags[1].checkMoveForWin(v));
-    }
-
-    @Override
-    public String toString() {
-        String format = ""
-                + "      1     2     3   \n"
-                + "   ┌─────┬─────┬─────┐\n"
-                + "A  │%3s  │%3s  │%3s  │\n"
-                + "   ├─────┼─────┼─────┤\n"
-                + "B  │%3s  │%3s  │%3s  │\n"
-                + "   ├─────┼─────┼─────┤\n"
-                + "C  │%3s  │%3s  │%3s  │\n"
-                + "   └─────┴─────┴─────┘";
-
-        String[] tiles = new String[9];
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 3; x++) {
-                tiles[y * 3 + x] = Tile.asString(board[y][x]);
-            }
+        board = new Tile[9];
+        for (int i = 0; i < 9; i++) {
+            board[i] = Tile.newBlank();
         }
-
-        return String.format(format, (Object[]) tiles);
+        columns = new RowCount[] { new RowCount(), new RowCount(), new RowCount() };
+        rows = new RowCount[] { new RowCount(), new RowCount(), new RowCount() };
+        fallingDiagonal = new RowCount();
+        risingDiagonal = new RowCount();
+        win = false;
     }
 
-    public boolean isWon() {
-        return win;
+    public void place(int x, int y, Tile t) {
+        board[y * 3 + x] = t;
+
+        win = win
+                || columns[x].checkWin(t)
+                || rows[y].checkWin(t)
+                || (x == y && fallingDiagonal.checkWin(t))
+                || ((2 - x) == y && risingDiagonal.checkWin(t));
     }
 
-    public boolean isDraw() {
-        return draw;
+    /**
+     * Getters/Setters
+     */
+
+    public Object[] getFormatArgs() {
+        return (Object[]) board;
     }
 }
