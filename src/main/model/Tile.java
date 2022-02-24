@@ -23,7 +23,7 @@ public class Tile {
         return new Tile(Type.X);
     }
 
-    public static Tile newY() {
+    public static Tile newO() {
         return new Tile(Type.O);
     }
 
@@ -31,9 +31,20 @@ public class Tile {
         return new Tile(Type.Blank);
     }
 
-    /**
-     * Getters/Setters
-     */
+    public boolean isBlank() {
+        return type == Type.Blank;
+    }
+
+    public Tile nextTile() {
+        switch (type) {
+            case O:
+                return Tile.newX();
+            case X:
+                return Tile.newO();
+            default:
+                throw new IllegalStateException("Cannot get a next tile from: " + type);
+        }
+    }
 
     public Type getType() {
         return type;

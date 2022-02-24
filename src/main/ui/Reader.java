@@ -10,14 +10,27 @@ import com.googlecode.lanterna.screen.Screen;
 import model.Game;
 
 public class Reader {
+    /**
+     * Static
+     */
+
     private static final Pattern LETTER_NUMBER = Pattern.compile("([a-cA-C])([1-3])");
     private static final Pattern NUMBER_LETTER = Pattern.compile("([1-3])([a-cA-C])");
     private static final Pattern QUIT = Pattern.compile("(?i)quit");
 
+    /**
+     * Data
+     */
+
+    // Dependencies
     private final Screen screen;
     private final Game game;
 
     private String buffer;
+
+    /**
+     * Internal
+     */
 
     private static int locationToInt(String string) {
         switch (string) {
@@ -43,6 +56,9 @@ public class Reader {
     }
 
     private void backspace() {
+        if (buffer.length() == 0) {
+            return;
+        }
         buffer = buffer.substring(0, buffer.length() - 1);
     }
 
@@ -64,7 +80,7 @@ public class Reader {
 
         m = NUMBER_LETTER.matcher(buffer);
         if (m.find()) {
-            place(m.group(1), m.group(1));
+            place(m.group(1), m.group(2));
         }
 
         m = QUIT.matcher(buffer);
@@ -74,6 +90,10 @@ public class Reader {
 
         buffer = "";
     }
+
+    /**
+     * Public
+     */
 
     public Reader(Screen screen, Game game) {
         this.screen = screen;
@@ -99,8 +119,7 @@ public class Reader {
         }
     }
 
-    @Override
-    public String toString() {
-        return buffer;
+    public Object[] getFormatArgs() {
+        return new Object[] { buffer };
     }
 }

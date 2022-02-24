@@ -11,22 +11,11 @@ public class Game {
 
     private State state;
     private Board board;
+    private Tile tile;
 
     /**
      * Internal
      */
-
-    private void play() {
-
-    }
-
-    private void draw() {
-
-    }
-
-    private void win() {
-
-    }
 
     /**
      * Public
@@ -35,19 +24,19 @@ public class Game {
     public Game() {
         state = State.Play;
         board = new Board();
+        tile = Tile.newX();
     }
 
     public void place(int x, int y) {
-        //
+        boolean placed = board.place(x, y, tile);
+        if (placed) {
+            tile = tile.nextTile();
+        }
     }
 
     public void end() {
         state = State.End;
     }
-
-    /**
-     * Getters & Setters
-     */
 
     public State getState() {
         return state;

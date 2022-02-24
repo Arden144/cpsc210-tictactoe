@@ -41,8 +41,8 @@ public class TicTacToe {
     public TicTacToe() throws IOException {
         screen = new DefaultTerminalFactory().createScreen();
         game = new Game();
-        renderer = new Renderer(screen, game);
         reader = new Reader(screen, game);
+        renderer = new Renderer(screen, game, reader);
     }
 
     public void start() throws IOException {

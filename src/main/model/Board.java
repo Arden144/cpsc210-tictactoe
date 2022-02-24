@@ -32,19 +32,20 @@ public class Board {
         win = false;
     }
 
-    public void place(int x, int y, Tile t) {
-        board[y * 3 + x] = t;
+    public boolean place(int x, int y, Tile t) {
+        if (!board[y * 3 + x].isBlank()) {
+            return false;
+        }
 
+        board[y * 3 + x] = t;
         win = win
                 || columns[x].checkWin(t)
                 || rows[y].checkWin(t)
                 || (x == y && fallingDiagonal.checkWin(t))
                 || ((2 - x) == y && risingDiagonal.checkWin(t));
-    }
 
-    /**
-     * Getters/Setters
-     */
+        return true;
+    }
 
     public Object[] getFormatArgs() {
         return (Object[]) board;
