@@ -10,27 +10,14 @@ import com.googlecode.lanterna.screen.Screen;
 import model.Game;
 
 public class Reader {
-    /**
-     * Static
-     */
-
     private static final Pattern LETTER_NUMBER = Pattern.compile("([a-cA-C])([1-3])");
     private static final Pattern NUMBER_LETTER = Pattern.compile("([1-3])([a-cA-C])");
     private static final Pattern QUIT = Pattern.compile("(?i)quit");
 
-    /**
-     * Data
-     */
-
-    // Dependencies
     private final Screen screen;
     private final Game game;
 
     private String buffer;
-
-    /**
-     * Internal
-     */
 
     private static int locationToInt(String string) {
         switch (string) {

@@ -5,21 +5,9 @@ public class Game {
         Play, Draw, Win, End
     }
 
-    /**
-     * Data
-     */
-
     private State state;
-    private Board board;
+    private final Board board;
     private Tile tile;
-
-    /**
-     * Internal
-     */
-
-    /**
-     * Public
-     */
 
     public Game() {
         state = State.Play;
@@ -33,6 +21,9 @@ public class Game {
             tile = tile.nextTile();
             if (board.getWin()) {
                 state = State.Win;
+            }
+            if (board.getDraw()) {
+                state = State.Draw;
             }
         }
     }

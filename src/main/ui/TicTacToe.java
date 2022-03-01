@@ -8,18 +8,10 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import model.Game;
 
 public class TicTacToe {
-    /**
-     * Data
-     */
-
     private final Screen screen;
     private final Game game;
     private final Renderer renderer;
     private final Reader reader;
-
-    /**
-     * Internal
-     */
 
     private void play() throws IOException {
         renderer.renderGame();
@@ -37,10 +29,6 @@ public class TicTacToe {
         reader.pause();
         game.end();
     }
-
-    /**
-     * Public
-     */
 
     public TicTacToe() throws IOException {
         screen = new DefaultTerminalFactory().createScreen();
@@ -67,5 +55,7 @@ public class TicTacToe {
                     throw new IllegalStateException("Unexpected Game State: " + game.getState());
             }
         }
+
+        screen.stopScreen();
     }
 }

@@ -9,10 +9,6 @@ import com.googlecode.lanterna.screen.Screen;
 import model.Game;
 
 public class Renderer {
-    /**
-     * Static
-     */
-
     private static final String BOARD_FORMAT = ""
             + "      1     2     3   \n"
             + "   ┌─────┬─────┬─────┐\n"
@@ -27,18 +23,9 @@ public class Renderer {
     private static final String DRAW = "Draw!";
     private static final String CONTINUE = "Press any key to quit.";
 
-    /**
-     * Data
-     */
-
-    // Dependencies
     private final Screen screen;
     private final Game game;
     private final Reader reader;
-
-    /**
-     * Internal
-     */
 
     private static void putMultilineString(TextGraphics tg, int column, int row, String string) {
         int i = 0;
@@ -56,10 +43,6 @@ public class Renderer {
         String string = String.format(PROMPT_FORMAT, reader.getFormatArgs());
         putMultilineString(tg, 0, 10, string);
     }
-
-    /**
-     * Public
-     */
 
     public Renderer(Screen screen, Game game, Reader reader) {
         this.screen = screen;

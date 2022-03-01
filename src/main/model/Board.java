@@ -1,24 +1,13 @@
 package model;
 
 public class Board {
-    /**
-     * Data
-     */
-
-    private Tile[] board;
-    private RowCount[] columns;
-    private RowCount[] rows;
-    private RowCount fallingDiagonal;
-    private RowCount risingDiagonal;
+    private final Tile[] board;
+    private final RowCount[] columns;
+    private final RowCount[] rows;
+    private final RowCount fallingDiagonal;
+    private final RowCount risingDiagonal;
     private boolean win;
-
-    /**
-     * Internal
-     */
-
-    /**
-     * Public
-     */
+    private int turns;
 
     public Board() {
         board = new Tile[9];
@@ -30,6 +19,7 @@ public class Board {
         fallingDiagonal = new RowCount();
         risingDiagonal = new RowCount();
         win = false;
+        turns = 0;
     }
 
     public boolean place(int x, int y, Tile t) {
@@ -38,6 +28,7 @@ public class Board {
         }
 
         board[y * 3 + x] = t;
+        turns++;
         win = win
                 || columns[x].checkWin(t)
                 || rows[y].checkWin(t)
@@ -51,7 +42,11 @@ public class Board {
         return win;
     }
 
+    public boolean getDraw() {
+        return turns >= 9;
+    }
+
     public Object[] getFormatArgs() {
-        return (Object[]) board;
+        return board;
     }
 }

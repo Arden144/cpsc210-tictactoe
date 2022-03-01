@@ -5,15 +5,7 @@ public class Tile {
         X, O, Blank
     }
 
-    /**
-     * Data
-     */
-
-    private Type type;
-
-    /**
-     * Public
-     */
+    private final Type type;
 
     public Tile(Type type) {
         this.type = type;
