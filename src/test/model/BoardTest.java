@@ -14,13 +14,13 @@ public class BoardTest {
     @Test
     public void detectsDraw() {
         Board board = new Board();
-        assertFalse(board.getDraw());
+        assertFalse(board.isDraw());
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 board.place(column, row, Tile.newX());
             }
         }
-        assertTrue(board.getDraw());
+        assertTrue(board.isDraw());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package model;
 
+// Represents a Tic Tac Toe board.
 public class Board {
     private final Tile[] board;
     private final RowCount[] columns;
@@ -9,6 +10,7 @@ public class Board {
     private boolean win;
     private int turns;
 
+    // EFFECTS: Creates a new board
     public Board() {
         board = new Tile[9];
         for (int i = 0; i < 9; i++) {
@@ -22,6 +24,11 @@ public class Board {
         turns = 0;
     }
 
+    // REQUIRES: 0 <= x < 3 and 0 <= y < 3 and t.getType() != Tile.Type.Blank
+    // MODIFIES: this
+    // EFFECTS: Attempts to place a tile on the board by adding it to the board,
+    // counting a turn, and updating the win state. Returns true if the tile was
+    // placed and false if there is already a tile in that position.
     public boolean place(int x, int y, Tile t) {
         if (!board[y * 3 + x].isBlank()) {
             return false;
@@ -38,12 +45,13 @@ public class Board {
         return true;
     }
 
-    public boolean getWin() {
-        return win;
+    // EFFECTS: Returns true if 9 turns have been taken, resulting a in draw.
+    public boolean isDraw() {
+        return turns == 9;
     }
 
-    public boolean getDraw() {
-        return turns >= 9;
+    public boolean getWin() {
+        return win;
     }
 
     public Object[] getFormatArgs() {

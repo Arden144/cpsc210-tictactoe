@@ -7,29 +7,36 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import model.Game;
 
+// Represents a Tic Tac Toe game.
 public class TicTacToe {
     private final Screen screen;
     private final Game game;
     private final Renderer renderer;
     private final Reader reader;
 
+    // EFFECTS: Run the methods to play a round of the game.
     private void play() throws IOException {
         renderer.renderGame();
         reader.read();
     }
 
+    // EFFETCTS: Draw the draw screen and bring the game to the end state after a
+    // keypress.
     private void draw() throws IOException {
         renderer.renderDraw();
         reader.pause();
         game.end();
     }
 
+    // EFFECTS: Draw the win screen and bring the game to the end
+    // state after a keypress.
     private void win() throws IOException {
         renderer.renderWin();
         reader.pause();
         game.end();
     }
 
+    // EFFECTS: Create a new Tic Tac Toe game.
     public TicTacToe() throws IOException {
         screen = new DefaultTerminalFactory().createScreen();
         game = new Game();
@@ -37,6 +44,8 @@ public class TicTacToe {
         renderer = new Renderer(screen, game, reader);
     }
 
+    // EFFECTS: Start the game loop and run the corresponding method based on the
+    // game state.
     public void start() throws IOException {
         screen.startScreen();
 
