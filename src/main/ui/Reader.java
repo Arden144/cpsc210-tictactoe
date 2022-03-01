@@ -119,6 +119,14 @@ public class Reader {
         }
     }
 
+    public void pause() throws IOException {
+        screen.readInput();
+    }
+
+    public int getBufferLength() {
+        return buffer.length();
+    }
+
     public Object[] getFormatArgs() {
         return new Object[] { buffer };
     }

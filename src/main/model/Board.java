@@ -47,6 +47,10 @@ public class Board {
         return true;
     }
 
+    public boolean getWin() {
+        return win;
+    }
+
     public Object[] getFormatArgs() {
         return (Object[]) board;
     }

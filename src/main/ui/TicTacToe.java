@@ -22,16 +22,20 @@ public class TicTacToe {
      */
 
     private void play() throws IOException {
-        renderer.render();
+        renderer.renderGame();
         reader.read();
     }
 
-    private void draw() {
-
+    private void draw() throws IOException {
+        renderer.renderDraw();
+        reader.pause();
+        game.end();
     }
 
-    private void win() {
-
+    private void win() throws IOException {
+        renderer.renderWin();
+        reader.pause();
+        game.end();
     }
 
     /**

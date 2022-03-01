@@ -31,11 +31,18 @@ public class Game {
         boolean placed = board.place(x, y, tile);
         if (placed) {
             tile = tile.nextTile();
+            if (board.getWin()) {
+                state = State.Win;
+            }
         }
     }
 
     public void end() {
         state = State.End;
+    }
+
+    public String getWinner() {
+        return tile.nextTile().toString();
     }
 
     public State getState() {
