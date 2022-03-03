@@ -1,7 +1,9 @@
 package model;
 
+import persistence.Codable;
+
 // Represents a Tic Tac Toe board.
-public class Board {
+public class Board extends Codable {
     private final Tile[] board;
     private final RowCount[] columns;
     private final RowCount[] rows;

@@ -1,7 +1,9 @@
 package model;
 
+import persistence.Codable;
+
 // Represents a Tic Tac Toe tile.
-public class Tile {
+public class Tile extends Codable {
     // Type of the tile.
     public enum Type {
         X, O, Blank

@@ -1,7 +1,9 @@
 package model;
 
+import persistence.Codable;
+
 // Represents a count of consecutive tiles in a row.
-public class RowCount {
+public class RowCount extends Codable {
     private int countX;
     private int countO;
 

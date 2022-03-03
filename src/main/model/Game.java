@@ -1,7 +1,9 @@
 package model;
 
+import persistence.Codable;
+
 // Represents a Tic Tac Toe game.
-public class Game {
+public class Game extends Codable {
     // Represents the current game state.
     public enum State {
         Play, Draw, Win, End
