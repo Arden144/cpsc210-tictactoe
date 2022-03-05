@@ -12,6 +12,17 @@ public class Board extends Codable {
     private boolean win;
     private int turns;
 
+    public Board(Tile[] board, RowCount[] columns, RowCount[] rows, RowCount fallingDiagonal, RowCount risingDiagonal,
+            boolean win, int turns) {
+        this.board = board;
+        this.columns = columns;
+        this.rows = rows;
+        this.fallingDiagonal = fallingDiagonal;
+        this.risingDiagonal = risingDiagonal;
+        this.win = win;
+        this.turns = turns;
+    }
+
     // EFFECTS: Creates a new board
     public Board() {
         board = new Tile[9];

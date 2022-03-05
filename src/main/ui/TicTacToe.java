@@ -6,6 +6,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 
 import model.Game;
+import persistence.Persist;
 
 // Represents a Tic Tac Toe game.
 public class TicTacToe {
@@ -34,6 +35,13 @@ public class TicTacToe {
         renderer.renderWin();
         reader.pause();
         game.end();
+    }
+
+    public TicTacToe(Game game) throws IOException {
+        screen = new DefaultTerminalFactory().createScreen();
+        this.game = game;
+        reader = new Reader(screen, game);
+        renderer = new Renderer(screen, game, reader);
     }
 
     // EFFECTS: Create a new Tic Tac Toe game.
@@ -66,5 +74,6 @@ public class TicTacToe {
         }
 
         screen.stopScreen();
+        Persist.write(game.encode().toString());
     }
 }

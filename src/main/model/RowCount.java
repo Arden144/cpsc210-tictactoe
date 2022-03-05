@@ -7,6 +7,11 @@ public class RowCount extends Codable {
     private int countX;
     private int countO;
 
+    public RowCount(int countX, int countO) {
+        this.countX = countX;
+        this.countO = countO;
+    }
+
     // EFFECTS: Creates a new row counter
     public RowCount() {
         countX = 0;

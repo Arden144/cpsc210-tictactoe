@@ -13,6 +13,12 @@ public class Game extends Codable {
     private final Board board;
     private Tile tile;
 
+    public Game(State state, Board board, Tile tile) {
+        this.state = state;
+        this.board = board;
+        this.tile = tile;
+    }
+
     // EFFECTS: Creates a new game.
     public Game() {
         state = State.Play;
@@ -51,6 +57,10 @@ public class Game extends Codable {
 
     public State getState() {
         return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
     public Board getBoard() {
