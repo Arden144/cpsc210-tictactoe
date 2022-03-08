@@ -70,4 +70,8 @@ public class Board extends Codable {
     public Object[] getFormatArgs() {
         return board;
     }
+
+    public String getText(int x, int y) {
+        return board[y * 3 + x].toString();
+    }
 }

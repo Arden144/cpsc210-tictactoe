@@ -1,79 +1,77 @@
 package ui;
 
-import java.io.IOException;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.GridLayout;
 
-import com.googlecode.lanterna.screen.Screen;
-import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import model.Game;
-import persistence.Persist;
 
-// Represents a Tic Tac Toe game.
 public class TicTacToe {
-    private final Screen screen;
     private final Game game;
-    private final Renderer renderer;
-    private final Reader reader;
+    private final JFrame frame;
+    private final JMenuBar menu;
+    private final JPanel board;
 
-    // EFFECTS: Run the methods to play a round of the game.
-    private void play() throws IOException {
-        renderer.renderGame();
-        reader.read();
-    }
-
-    // EFFETCTS: Draw the draw screen and bring the game to the end state after a
-    // keypress.
-    private void draw() throws IOException {
-        renderer.renderDraw();
-        reader.pause();
-        game.end();
-    }
-
-    // EFFECTS: Draw the win screen and bring the game to the end
-    // state after a keypress.
-    private void win() throws IOException {
-        renderer.renderWin();
-        reader.pause();
-        game.end();
-    }
-
-    public TicTacToe(Game game) throws IOException {
-        screen = new DefaultTerminalFactory().createScreen();
-        this.game = game;
-        reader = new Reader(screen, game);
-        renderer = new Renderer(screen, game, reader);
-    }
-
-    // EFFECTS: Create a new Tic Tac Toe game.
-    public TicTacToe() throws IOException {
-        screen = new DefaultTerminalFactory().createScreen();
+    public TicTacToe() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                | UnsupportedLookAndFeelException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         game = new Game();
-        reader = new Reader(screen, game);
-        renderer = new Renderer(screen, game, reader);
-    }
+        frame = new JFrame();
+        frame.setTitle("Tic Tac Toe");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // frame.setSize(300, 300);
+        Container contentPane = frame.getContentPane();
 
-    // EFFECTS: Start the game loop and run the corresponding method based on the
-    // game state.
-    public void start() throws IOException {
-        screen.startScreen();
+        menu = new JMenuBar();
+        JMenu file = new JMenu("File");
+        JMenuItem save = new JMenuItem("Save");
+        file.add(save);
+        menu.add(file);
+        frame.setJMenuBar(menu);
 
-        while (game.getState() != Game.State.End) {
-            switch (game.getState()) {
-                case Play:
-                    play();
-                    break;
-                case Draw:
-                    draw();
-                    break;
-                case Win:
-                    win();
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected Game State: " + game.getState());
+        board = new JPanel(new GridLayout(3, 3));
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                final int x = col;
+                final int y = row;
+                JButton button = new JButton();
+                button.setBackground(Color.WHITE);
+                button.setFont(new Font("Arial", Font.BOLD, 64));
+                button.setText(game.getBoard().getText(x, y));
+                button.addActionListener(e -> {
+                    game.place(x, y);
+                    button.setText(game.getBoard().getText(x, y));
+                    if (game.getState() == Game.State.Win) {
+                        JOptionPane.showMessageDialog(null, String.format("%s wins!", game.getWinner()));
+                    } else if (game.getState() == Game.State.Draw) {
+                        JOptionPane.showMessageDialog(null, "Draw!");
+                    }
+                });
+                board.add(button);
             }
         }
+        contentPane.add(board);
+    }
 
-        screen.stopScreen();
-        Persist.save(game.encode());
+    public void start() {
+        frame.setSize(300, 300);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }
