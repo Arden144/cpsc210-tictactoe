@@ -74,6 +74,6 @@ public class TicTacToe {
         }
 
         screen.stopScreen();
-        Persist.write(game.encode().toString());
+        Persist.save(game.encode());
     }
 }
