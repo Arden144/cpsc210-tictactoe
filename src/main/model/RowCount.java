@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 import persistence.Codable;
 
 // Represents a count of consecutive tiles in a row.
@@ -31,5 +33,22 @@ public class RowCount extends Codable {
             default:
                 throw new IllegalArgumentException("Unexpected tile placed: " + t.getType());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        RowCount rowCount = (RowCount) o;
+        return countX == rowCount.countX && countO == rowCount.countO;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(countX, countO);
     }
 }

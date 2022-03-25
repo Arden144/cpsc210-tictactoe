@@ -1,9 +1,28 @@
 package model;
 
+import java.util.Objects;
+
 import persistence.Codable;
 
 // Represents a Tic Tac Toe tile.
 public class Tile extends Codable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Tile tile = (Tile) o;
+        return type == tile.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
+    }
+
     // Type of the tile.
     public enum Type {
         X, O, Blank
@@ -45,7 +64,7 @@ public class Tile extends Codable {
             case X:
                 return Tile.newO();
             default:
-                throw new IllegalStateException("Cannot get a next tile from: " + type);
+                throw new IllegalStateException("Cannot get a next tile from a blank tile.");
         }
     }
 
@@ -61,10 +80,8 @@ public class Tile extends Codable {
                 return " ";
             case O:
                 return "O";
-            case X:
-                return "X";
             default:
-                throw new IllegalStateException("Unexpected tile state: " + type);
+                return "X";
         }
     }
 }

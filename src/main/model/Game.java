@@ -1,17 +1,40 @@
 package model;
 
+import java.util.Objects;
+import java.util.function.BiConsumer;
+
 import persistence.Codable;
+import persistence.Ignored;
 
 // Represents a Tic Tac Toe game.
 public class Game extends Codable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Game game = (Game) o;
+        return state == game.state && board.equals(game.board) && tile.equals(game.tile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(state, board, tile);
+    }
+
     // Represents the current game state.
     public enum State {
-        Play, Draw, Win, End
+        Play, Draw, Win, Restart
     }
 
     private State state;
-    private final Board board;
+    private Board board;
     private Tile tile;
+    @Ignored
+    private BiConsumer<State, State> listener;
 
     public Game(State state, Board board, Tile tile) {
         this.state = state;
@@ -21,9 +44,7 @@ public class Game extends Codable {
 
     // EFFECTS: Creates a new game.
     public Game() {
-        state = State.Play;
-        board = new Board();
-        tile = Tile.newX();
+        restart();
     }
 
     // REQUIRES: 0 <= x < 3 and 0 <= y < 3
@@ -34,19 +55,23 @@ public class Game extends Codable {
         boolean placed = board.place(x, y, tile);
         if (placed) {
             tile = tile.nextTile();
-            if (board.getWin()) {
-                state = State.Win;
-            }
-            if (board.isDraw()) {
-                state = State.Draw;
+            if (board.isWin()) {
+                setState(State.Win);
+            } else if (board.isDraw()) {
+                setState(State.Draw);
             }
         }
     }
 
-    // MODIFIES: this
-    // EFFECTS: Set game state to end.
-    public void end() {
-        state = State.End;
+    public void restart() {
+        board = new Board();
+        tile = Tile.newX();
+        setState(State.Restart);
+        setState(State.Play);
+    }
+
+    public void addStateChangeListener(BiConsumer<State, State> listener) {
+        this.listener = listener;
     }
 
     // REQUIRES: state = State.Win
@@ -60,7 +85,11 @@ public class Game extends Codable {
     }
 
     public void setState(State state) {
+        State oldState = this.state;
         this.state = state;
+        if (listener != null) {
+            listener.accept(oldState, state);
+        }
     }
 
     public Board getBoard() {

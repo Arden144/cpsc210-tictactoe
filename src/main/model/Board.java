@@ -1,5 +1,8 @@
 package model;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 import persistence.Codable;
 
 // Represents a Tic Tac Toe board.
@@ -63,11 +66,34 @@ public class Board extends Codable {
         return turns == 9;
     }
 
-    public boolean getWin() {
+    public boolean isWin() {
         return win;
     }
 
-    public Object[] getFormatArgs() {
-        return board;
+    public String getText(int x, int y) {
+        return board[y * 3 + x].toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Board board1 = (Board) o;
+        return win == board1.win && turns == board1.turns && Arrays.equals(board, board1.board)
+                && Arrays.equals(columns, board1.columns) && Arrays.equals(rows, board1.rows)
+                && fallingDiagonal.equals(board1.fallingDiagonal) && risingDiagonal.equals(board1.risingDiagonal);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(fallingDiagonal, risingDiagonal, win, turns);
+        result = 31 * result + Arrays.hashCode(board);
+        result = 31 * result + Arrays.hashCode(columns);
+        result = 31 * result + Arrays.hashCode(rows);
+        return result;
     }
 }

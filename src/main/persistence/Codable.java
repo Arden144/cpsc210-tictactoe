@@ -2,7 +2,6 @@ package persistence;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -27,7 +26,7 @@ public abstract class Codable {
             } else {
                 return null;
             }
-        } catch (SecurityException | IllegalArgumentException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -37,16 +36,17 @@ public abstract class Codable {
             Field[] fields = cls.getDeclaredFields();
             Object[] parameters = Arrays.stream(fields)
                     .filter(e -> !e.isSynthetic())
+                    .filter(e -> !e.isAnnotationPresent(Ignored.class))
                     .map(e -> decodeValue(e.getType(), json.get(e.getName())))
                     .toArray();
             Class<?>[] parameterTypes = Arrays.stream(fields)
                     .filter(e -> !e.isSynthetic())
+                    .filter(e -> !e.isAnnotationPresent(Ignored.class))
                     .map(Field::getType)
                     .collect(Collectors.toList())
                     .toArray(new Class<?>[0]);
             return cls.getConstructor(parameterTypes).newInstance(parameters);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | SecurityException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -70,7 +70,7 @@ public abstract class Codable {
     private Object encodeField(Field field) {
         try {
             return encodeValue(field.getType(), field.get(this));
-        } catch (IllegalArgumentException | IllegalAccessException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -78,6 +78,7 @@ public abstract class Codable {
     public JSONObject encode() {
         return new JSONObject(Arrays.stream(getClass().getDeclaredFields())
                 .filter(e -> !e.isSynthetic())
+                .filter(e -> !e.isAnnotationPresent(Ignored.class))
                 .peek(e -> e.setAccessible(true))
                 .collect(Collectors.toMap(Field::getName, this::encodeField)));
     }
