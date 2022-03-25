@@ -1,7 +1,10 @@
 package model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class BoardTest {
     @Test
@@ -26,41 +29,41 @@ public class BoardTest {
     @Test
     public void winRow() {
         Board board = new Board();
-        assertFalse(board.getWin());
+        assertFalse(board.isWin());
         board.place(0, 0, Tile.newX());
         board.place(1, 0, Tile.newX());
         board.place(2, 0, Tile.newX());
-        assertTrue(board.getWin());
+        assertTrue(board.isWin());
     }
 
     @Test
     public void winColumn() {
         Board board = new Board();
-        assertFalse(board.getWin());
+        assertFalse(board.isWin());
         board.place(0, 0, Tile.newX());
         board.place(0, 1, Tile.newX());
         board.place(0, 2, Tile.newX());
-        assertTrue(board.getWin());
+        assertTrue(board.isWin());
     }
 
     @Test
     public void winFallingDiagonal() {
         Board board = new Board();
-        assertFalse(board.getWin());
+        assertFalse(board.isWin());
         board.place(0, 0, Tile.newX());
         board.place(1, 1, Tile.newX());
         board.place(2, 2, Tile.newX());
-        assertTrue(board.getWin());
+        assertTrue(board.isWin());
     }
 
     @Test
     public void winRisingDiagonal() {
         Board board = new Board();
-        assertFalse(board.getWin());
+        assertFalse(board.isWin());
         board.place(0, 2, Tile.newX());
         board.place(1, 1, Tile.newX());
         board.place(2, 0, Tile.newX());
-        assertTrue(board.getWin());
+        assertTrue(board.isWin());
     }
 
     @Test
@@ -68,6 +71,6 @@ public class BoardTest {
         Board board = new Board();
         Tile tile = Tile.newX();
         board.place(1, 1, tile);
-        assertEquals(tile, board.getFormatArgs()[4]);
+        assertEquals(tile, board.getText(1, 1));
     }
 }

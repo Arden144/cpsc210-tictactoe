@@ -1,77 +1,85 @@
 package ui;
 
-import java.awt.Color;
 import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.IOException;
 
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import model.Game;
+import model.Game.State;
+import persistence.Codable;
+import persistence.Persist;
 
-public class TicTacToe {
-    private final Game game;
-    private final JFrame frame;
-    private final JMenuBar menu;
-    private final JPanel board;
+public class TicTacToe extends JFrame {
+    private WindowListener windowListener = new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+            try {
+                if (game.getState() == Game.State.Win || game.getState() == Game.State.Draw) {
+                    game.restart();
+                }
+                Persist.save(game.encode());
+            } catch (IOException ex) {
+                System.err.println("Failed to save the game to file.");
+            }
+        }
+    };
+
+    private Game game;
+    private Board board;
 
     public TicTacToe() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                | UnsupportedLookAndFeelException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        game = new Game();
-        frame = new JFrame();
-        frame.setTitle("Tic Tac Toe");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // frame.setSize(300, 300);
-        Container contentPane = frame.getContentPane();
-
-        menu = new JMenuBar();
-        JMenu file = new JMenu("File");
-        JMenuItem save = new JMenuItem("Save");
-        file.add(save);
-        menu.add(file);
-        frame.setJMenuBar(menu);
-
-        board = new JPanel(new GridLayout(3, 3));
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                final int x = col;
-                final int y = row;
-                JButton button = new JButton();
-                button.setBackground(Color.WHITE);
-                button.setFont(new Font("Arial", Font.BOLD, 64));
-                button.setText(game.getBoard().getText(x, y));
-                button.addActionListener(e -> {
-                    game.place(x, y);
-                    button.setText(game.getBoard().getText(x, y));
-                    if (game.getState() == Game.State.Win) {
-                        JOptionPane.showMessageDialog(null, String.format("%s wins!", game.getWinner()));
-                    } else if (game.getState() == Game.State.Draw) {
-                        JOptionPane.showMessageDialog(null, "Draw!");
-                    }
-                });
-                board.add(button);
-            }
+        try {
+            game = Codable.decode(Persist.load(), Game.class);
+        } catch (IOException e) {
+            System.err.println("Failed to load game from save file.");
         }
+        if (game == null) {
+            game = new Game();
+        }
+        game.addStateChangeListener(this::onStateChange);
+
+        setTitle("Tic Tac Toe");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        addWindowListener(windowListener);
+
+        setJMenuBar(new Menu(game));
+        Container contentPane = getContentPane();
+        board = new Board(game);
         contentPane.add(board);
     }
 
+    private void onStateChange(State oldState, State newState) {
+        switch (newState) {
+            case Win:
+                JOptionPane.showMessageDialog(null, String.format("%s wins!", game.getWinner()));
+                board.setEnabled(false);
+                break;
+            case Draw:
+                JOptionPane.showMessageDialog(null, "Draw!");
+                board.setEnabled(false);
+                break;
+            case Restart:
+                board.updateText();
+                board.setEnabled(true);
+                break;
+            default:
+                break;
+        }
+    }
+
     public void start() {
-        frame.setSize(300, 300);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        setSize(300, 300);
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 }

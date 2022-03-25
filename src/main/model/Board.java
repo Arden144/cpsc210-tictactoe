@@ -63,12 +63,8 @@ public class Board extends Codable {
         return turns == 9;
     }
 
-    public boolean getWin() {
+    public boolean isWin() {
         return win;
-    }
-
-    public Object[] getFormatArgs() {
-        return board;
     }
 
     public String getText(int x, int y) {

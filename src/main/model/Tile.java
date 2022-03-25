@@ -45,7 +45,7 @@ public class Tile extends Codable {
             case X:
                 return Tile.newO();
             default:
-                throw new IllegalStateException("Cannot get a next tile from: " + type);
+                throw new IllegalStateException("Cannot get a next tile from a blank tile.");
         }
     }
 
@@ -61,10 +61,8 @@ public class Tile extends Codable {
                 return " ";
             case O:
                 return "O";
-            case X:
-                return "X";
             default:
-                throw new IllegalStateException("Unexpected tile state: " + type);
+                return "X";
         }
     }
 }
