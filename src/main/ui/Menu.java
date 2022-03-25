@@ -4,8 +4,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-import model.Game;
-
 public class Menu extends JMenuBar {
     public Menu(TicTacToe window) {
         super();
