@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import model.Game;
 
 public class Button extends JButton implements ActionListener {
-    private final Game game;
+    private Game game;
     private final int posX;
     private final int posY;
 
@@ -28,6 +28,10 @@ public class Button extends JButton implements ActionListener {
 
     public void updateText() {
         setText(game.getBoard().getText(posX, posY));
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     @Override

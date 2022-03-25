@@ -1,5 +1,6 @@
 package model;
 
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import persistence.Codable;
@@ -7,6 +8,23 @@ import persistence.Ignored;
 
 // Represents a Tic Tac Toe game.
 public class Game extends Codable {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Game game = (Game) o;
+        return state == game.state && board.equals(game.board) && tile.equals(game.tile);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(state, board, tile);
+    }
+
     // Represents the current game state.
     public enum State {
         Play, Draw, Win, Restart

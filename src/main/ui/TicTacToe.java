@@ -18,14 +18,10 @@ import persistence.Persist;
 public class TicTacToe extends JFrame {
     private WindowListener windowListener = new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
-            try {
-                if (game.getState() == Game.State.Win || game.getState() == Game.State.Draw) {
-                    game.restart();
-                }
-                Persist.save(game.encode());
-            } catch (IOException ex) {
-                System.err.println("Failed to save the game to file.");
+            if (game.getState() == Game.State.Win || game.getState() == Game.State.Draw) {
+                game.restart();
             }
+            save();
         }
     };
 
@@ -38,11 +34,7 @@ public class TicTacToe extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            game = Codable.decode(Persist.load(), Game.class);
-        } catch (IOException e) {
-            System.err.println("Failed to load game from save file.");
-        }
+        load();
         if (game == null) {
             game = new Game();
         }
@@ -52,7 +44,7 @@ public class TicTacToe extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addWindowListener(windowListener);
 
-        setJMenuBar(new Menu(game));
+        setJMenuBar(new Menu(this));
         Container contentPane = getContentPane();
         board = new Board(game);
         contentPane.add(board);
@@ -75,6 +67,32 @@ public class TicTacToe extends JFrame {
             default:
                 break;
         }
+    }
+
+    public void save() {
+        try {
+            Persist.save(game.encode());
+        } catch (IOException ex) {
+            System.err.println("Failed to save the game to file.");
+        }
+    }
+
+    public void load() {
+        try {
+            game = Codable.decode(Persist.load(), Game.class);
+            game.addStateChangeListener(this::onStateChange);
+        } catch (IOException e) {
+            System.err.println("Failed to load game from save file.");
+        }
+        if (board != null) {
+            board.setGame(game);
+            board.updateText();
+            board.setEnabled(true);
+        }
+    }
+
+    public void restart() {
+        game.restart();
     }
 
     public void start() {

@@ -71,6 +71,6 @@ public class BoardTest {
         Board board = new Board();
         Tile tile = Tile.newX();
         board.place(1, 1, tile);
-        assertEquals(tile, board.getText(1, 1));
+        assertEquals("X", board.getText(1, 1));
     }
 }
