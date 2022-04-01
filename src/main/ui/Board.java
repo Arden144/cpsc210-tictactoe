@@ -4,12 +4,14 @@ import java.awt.GridLayout;
 
 import javax.swing.JPanel;
 
-import model.Game;
+import model.Tile;
 
+// Represents a game board shown on the screen.
 public class Board extends JPanel {
-    private Button[] buttons;
+    private final Button[] buttons;
 
-    public Board(Game game) {
+    // EFFECTS: Creates a new board on the window.
+    public Board(TicTacToe window) {
         super();
 
         setLayout(new GridLayout(3, 3));
@@ -17,29 +19,27 @@ public class Board extends JPanel {
         buttons = new Button[9];
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                buttons[row * 3 + col] = new Button(game, row, col);
+                buttons[row * 3 + col] = new Button(window, col, row);
                 add(buttons[row * 3 + col]);
             }
         }
     }
 
-    public void updateText() {
+    // MODIFIES: this
+    // EFFECTS: Updates the buttons on the board.
+    public void updateComponent(Tile[][] board) {
         for (Button button : buttons) {
-            button.updateText();
+            button.updateComponent(board);
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: Sets the enabled/disabled state of the board and all buttons.
     @Override
     public void setEnabled(boolean b) {
         super.setEnabled(b);
         for (Button button : buttons) {
             button.setEnabled(b);
-        }
-    }
-
-    public void setGame(Game game) {
-        for (Button button : buttons) {
-            button.setGame(game);
         }
     }
 }

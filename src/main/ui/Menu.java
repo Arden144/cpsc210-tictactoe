@@ -4,7 +4,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+// Represents the menu bar on the screen.
 public class Menu extends JMenuBar {
+    // EFFECTS: Creates a new menu bar.
     public Menu(TicTacToe window) {
         super();
 
@@ -19,5 +21,11 @@ public class Menu extends JMenuBar {
         file.add(save);
         file.add(load);
         add(file);
+
+        JMenu edit = new JMenu("Edit");
+        JMenuItem undo = new JMenuItem("Undo");
+        undo.addActionListener(l -> window.undo());
+        edit.add(undo);
+        add(edit);
     }
 }

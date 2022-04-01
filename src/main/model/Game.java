@@ -1,98 +1,139 @@
 package model;
 
-import java.util.Objects;
-import java.util.function.BiConsumer;
-
-import persistence.Codable;
-import persistence.Ignored;
+import java.util.Stack;
 
 // Represents a Tic Tac Toe game.
-public class Game extends Codable {
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Game game = (Game) o;
-        return state == game.state && board.equals(game.board) && tile.equals(game.tile);
+public class Game {
+    private final Stack<Move> moves;
+    private boolean ended;
+
+    // EFFECTS: Creates a new game with existing moves.
+    public Game(Stack<Move> moves, boolean ended) {
+        this.moves = moves;
+        this.ended = ended;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(state, board, tile);
-    }
-
-    // Represents the current game state.
-    public enum State {
-        Play, Draw, Win, Restart
-    }
-
-    private State state;
-    private Board board;
-    private Tile tile;
-    @Ignored
-    private BiConsumer<State, State> listener;
-
-    public Game(State state, Board board, Tile tile) {
-        this.state = state;
-        this.board = board;
-        this.tile = tile;
-    }
-
-    // EFFECTS: Creates a new game.
+    // EFFECTS: Creates a new game with no moves.
     public Game() {
-        restart();
+        moves = new Stack<>();
+        ended = false;
     }
 
-    // REQUIRES: 0 <= x < 3 and 0 <= y < 3
+    // REQUIRES: 0 <= posX <= 2, 0 <= posY <= 2
     // MODIFIES: this
-    // EFFECTS: Try placing a tile on the board, change the next tile if successful,
-    // and check if the move resulted in a win or draw.
-    public void place(int x, int y) {
-        boolean placed = board.place(x, y, tile);
-        if (placed) {
-            tile = tile.nextTile();
-            if (board.isWin()) {
-                setState(State.Win);
-            } else if (board.isDraw()) {
-                setState(State.Draw);
+    // EFFECTS: Places a tile on the board.
+    public String place(int posX, int posY) {
+        if (isOverlapping(posX, posY)) {
+            return null;
+        }
+
+        Tile tile = nextTile();
+        moves.push(new Move(posX, posY, tile));
+        logPlace(posX, posY, tile);
+
+        String winner = getWinner();
+        if (winner != null) {
+            ended = true;
+            return winner + " wins!";
+        } else if (isDraw()) {
+            ended = true;
+            return "Draw!";
+        } else {
+            return null;
+        }
+    }
+
+    // REQUIRES: 0 <= posX <= 2, 0 <= posY <= 2
+    // EFFECTS: Returns true if a tiles exists at the given position.
+    private boolean isOverlapping(int posX, int posY) {
+        for (Move move : moves) {
+            if (move.getPosX() == posX && move.getPosY() == posY) {
+                return true;
             }
         }
+        return false;
     }
 
-    public void restart() {
-        board = new Board();
-        tile = Tile.newX();
-        setState(State.Restart);
-        setState(State.Play);
+    // REQUIRES: 0 <= posX <= 2, 0 <= posY <= 2
+    // EFFECTS: Adds a placed tile to the event log.
+    private void logPlace(int posX, int posY, Tile tile) {
+        EventLog log = EventLog.getInstance();
+        log.logEvent(new Event(String.format("Tile %s placed at (%d, %d)", tile, posX, posY)));
     }
 
-    public void addStateChangeListener(BiConsumer<State, State> listener) {
-        this.listener = listener;
+    // EFFECTS: Returns the name of the winner, or null if there is no winner.
+    private String getWinner() {
+        Tile[][] board = getBoard();
+        for (Tile[] row : board) {
+            if (row[0] != null && row[0] == row[1] && row[1] == row[2]) {
+                return row[0].toString();
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            if (board[0][i] != null && board[0][i] == board[1][i] && board[1][i] == board[2][i]) {
+                return board[0][i].toString();
+            }
+        }
+
+        if (board[0][0] != null && board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
+            return board[0][0].toString();
+        }
+
+        if (board[0][2] != null && board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
+            return board[0][2].toString();
+        }
+
+        return null;
     }
 
-    // REQUIRES: state = State.Win
-    // EFFECTS: Return the name of the winner.
-    public String getWinner() {
-        return tile.nextTile().toString();
+    // EFFECTS: Returns true if the game is a draw.
+    private boolean isDraw() {
+        return moves.size() == 9;
     }
 
-    public State getState() {
-        return state;
+    // MODIFIES: this
+    // EFFECTS: Undo the last move.
+    public void undo() {
+        if (moves.empty()) {
+            return;
+        }
+
+        ended = false;
+        Move move = moves.pop();
+        logUndo(move.getPosX(), move.getPosY(), move.getTile());
     }
 
-    public void setState(State state) {
-        State oldState = this.state;
-        this.state = state;
-        if (listener != null) {
-            listener.accept(oldState, state);
+    // REQUIRES: 0 <= posX <= 2, 0 <= posY <= 2
+    // EFFECTS: Adds an undo event to the event log.
+    private void logUndo(int posX, int posY, Tile tile) {
+        EventLog log = EventLog.getInstance();
+        log.logEvent(new Event(String.format("Undid tile %s from (%d, %d)", tile, posX, posY)));
+    }
+
+    // EFFECTS: Returns the next tile to be placed.
+    private Tile nextTile() {
+        if (moves.size() % 2 == 0) {
+            return Tile.X;
+        } else {
+            return Tile.O;
         }
     }
 
-    public Board getBoard() {
+    // EFFECTS: Returns a representation of the board.
+    public Tile[][] getBoard() {
+        Tile[][] board = new Tile[3][3];
+        for (Move move : moves) {
+            board[move.getPosY()][move.getPosX()] = move.getTile();
+        }
         return board;
+    }
+
+    public Stack<Move> getMoves() {
+        return moves;
+    }
+
+    public boolean getEnded() {
+        return ended;
     }
 }
