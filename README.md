@@ -14,8 +14,8 @@ An application recreating the class Tic Tac Toe game. A great, quick game for tw
 - As a user, I want to be able to save my progress to a file.
 - As a user, I want to be able to load from progress from a file.
 
-
 ## Phase 4: Task 2
+
 ```
 Fri Apr 01 11:39:32 PDT 2022
 Tile X placed at (0, 0)
@@ -36,3 +36,7 @@ Tile O placed at (1, 1)
 Fri Apr 01 11:39:42 PDT 2022
 Tile X placed at (0, 1)
 ```
+
+## Phase 4: Task 3
+
+The flow of my UML class diagram is logical for the most part. If I were to refacter a component of my project given more time, I would refactor the Button class so as to not include an association with the TicTacToe class. This would likely be done through the singleton pattern, as my game will never have more than one window and the TicTacToe class represents a window. By removing this association, a reference to the TicTacToe object would no longer need to be passed on to the Button by the Board during construction, and would make the Board class more cohesive since it no longer has to handle that responsibility which is unrelated to its own purpose.

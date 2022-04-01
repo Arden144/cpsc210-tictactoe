@@ -19,7 +19,7 @@ public class Game {
         ended = false;
     }
 
-    // REQUIRES: 0 <= posX <= 2, 0 <= posY <= 2
+    // REQUIRES: 0 <= posX <= 2, 0 <= posY <= 2, moves.size() < 9
     // MODIFIES: this
     // EFFECTS: Places a tile on the board.
     public String place(int posX, int posY) {
