@@ -1,14 +1,12 @@
 package model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Calendar;
 import java.util.Date;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the Event class
@@ -42,9 +40,9 @@ public class EventTest {
     public void testEquals() {
         Event event1 = new Event("Sensor open at door");
         Event event2 = new Event("Sensor open at door");
-        assertTrue(event1.equals(event2));
-        assertFalse(event1.equals(null));
-        assertFalse(event1.equals(new Object()));
+        assertEquals(event1, event2);
+        assertNotEquals(null, event1);
+        assertNotEquals(event1, new Object());
     }
 
     @Test
